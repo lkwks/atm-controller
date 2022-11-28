@@ -9,15 +9,15 @@ from bankAPI import checkPIN
 
 if __name__ == "__main__":
 
-    atmController = atmObj()
+    atmController: atmObj = atmObj()
     atmController.dbOpen()
 
     while True:
-        card_info = atmController.getCardInfo()
-        pin = atmController.getPIN()
+        card_info: int = atmController.getCardInfo()
+        pin: int = atmController.getPIN()
         if checkPIN(card_info, pin) == False: break
         atmController.getAccountSelection()
-        page_selection = atmController.getPageSelection()
+        page_selection: str = atmController.getPageSelection()
 
         if page_selection == "balance":
             atmController.showBalance()
