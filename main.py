@@ -9,7 +9,7 @@ from bankAPI import checkPIN
 
 if __name__ == "__main__":
 
-    atmController = atmObj()
+    atmController: atmObj = atmObj()
     atmController.dbOpen()
 
     while True:
