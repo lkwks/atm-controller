@@ -6,7 +6,7 @@ class atmViewObj:
 
     def __inputBox__(self, boxText: str) -> int:
         while True:
-            box = input(boxText)
+            box: str = input(boxText)
             if box.isdigit(): return int(box)
 
     def renderGetCardInfo(self) -> int:

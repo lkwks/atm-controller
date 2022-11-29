@@ -1,5 +1,5 @@
 import sqlite3
-from typing import List
+from typing import List, Any
 
 # 사용돼야 할 테이블
 # 사용자별 카드정보, 계좌 정보, 계좌 잔고
@@ -13,13 +13,13 @@ class dbObj:
         pass
 
     def open(self) -> None:
-        self.__conn__ = sqlite3.connect('./atm.db')
-        self.__cursor__ = self.__conn__.cursor()
+        self.__conn__: sqlite3.Connection = sqlite3.connect('./atm.db')
+        self.__cursor__: sqlite3.Cursor = self.__conn__.cursor()
         self.__checkIfNoTable__()
 
     def __checkIfNoTable__(self) -> None:
         self.__cursor__.execute('SELECT COUNT(*) FROM sqlite_master Where name = "CustomerInfo"')
-        result = self.__cursor__.fetchone()
+        result: Any = self.__cursor__.fetchone()
         if result[0] != 1:
             self.__cursor__.execute('CREATE TABLE CustomerInfo(CardInfo INTEGER, Account INTEGER, FOREIGN KEY(Account) REFERENCES AccountInfo(Account))')
 
@@ -31,7 +31,7 @@ class dbObj:
         
     def getAccounts(self, cardInfo: int) -> List[int]:
         self.__cursor__.execute('SELECT Account FROM CustomerInfo WHERE CardInfo = ?', (cardInfo,))
-        result = [item[0] for item in self.__cursor__.fetchall()]
+        result: List[int] = [item[0] for item in self.__cursor__.fetchall()]
         return result
 
     def close(self) -> None:
@@ -39,7 +39,7 @@ class dbObj:
 
     def getBalance(self, account: int) -> int:
         self.__cursor__.execute('SELECT Balance FROM AccountInfo WHERE Account = ?', (account,))
-        result = self.__cursor__.fetchone()
+        result: Any = self.__cursor__.fetchone()
         return result[0]
 
     def deposit(self, **kwargs: int) -> None:
@@ -47,7 +47,7 @@ class dbObj:
 
         try:
             self.__cursor__.execute('SELECT Balance FROM AccountInfo WHERE Account = ?', (kwargs["account"],))
-            result = self.__cursor__.fetchone()[0] + kwargs["deposit"]
+            result: int = self.__cursor__.fetchone()[0] + kwargs["deposit"]
             self.__cursor__.execute('UPDATE AccountInfo SET Balance = ? WHERE Account = ?', (result, kwargs["account"],))
             self.__cursor__.execute('COMMIT')
         except Exception as e:
@@ -60,7 +60,7 @@ class dbObj:
 
         try:
             self.__cursor__.execute('SELECT Balance FROM AccountInfo WHERE Account = ?', (kwargs["account"],))
-            result = self.__cursor__.fetchone()[0] - kwargs["withdraw"]
+            result: int = self.__cursor__.fetchone()[0] - kwargs["withdraw"]
             if result < 0: 
                 raise Exception("insufficient balance")
             self.__cursor__.execute('UPDATE AccountInfo SET Balance = ? WHERE Account = ?', (result, kwargs["account"],))
